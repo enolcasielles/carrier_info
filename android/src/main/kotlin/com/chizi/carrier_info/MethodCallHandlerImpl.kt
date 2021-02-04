@@ -63,27 +63,6 @@ internal class MethodCallHandlerImpl(context: Context, activity: Activity?) : Me
                 "mobileNetworkOperator" -> {
                     mobileNetworkOperator(result)
                 }
-                "radioType" -> {
-                    func = { radioType(result) }
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                        if (!checkIfAlreadyHavePermission()) {
-                            requestForSpecificPermission(0)
-                        }else{
-                            radioType(result)
-                        }
-                    }
-                }
-                "networkGeneration" -> {
-                    func = { networkGeneration(result) }
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                        if (!checkIfAlreadyHavePermission()) {
-                            requestForSpecificPermission(1)
-                        }else{
-                            networkGeneration(result)
-                        }
-                    }
-
-                }
                 else -> {
                     result.notImplemented()
                 }
@@ -105,65 +84,6 @@ internal class MethodCallHandlerImpl(context: Context, activity: Activity?) : Me
             result.success(carrierName)
         } else {
             result.error(E_NO_CARRIER_NAME, "No carrier name","")
-        }
-    }
-
-    private fun radioType(result: MethodChannel.Result) {
-        when (mTelephonyManager!!.radioType) {
-            TelephonyManager.NETWORK_TYPE_1xRTT -> result.success("1xRTT")
-            TelephonyManager.NETWORK_TYPE_CDMA -> result.success("CDMA")
-            TelephonyManager.NETWORK_TYPE_EDGE -> result.success("EDGE")
-            TelephonyManager.NETWORK_TYPE_EHRPD -> result.success("eHRPD")
-            TelephonyManager.NETWORK_TYPE_EVDO_0 ->result.success("EVDO rev. 0")
-            TelephonyManager.NETWORK_TYPE_EVDO_A -> result.success("EVDO rev. A")
-            TelephonyManager.NETWORK_TYPE_EVDO_B -> result.success("EVDO rev. B")
-            TelephonyManager.NETWORK_TYPE_GPRS -> result.success("GPRS")
-            TelephonyManager.NETWORK_TYPE_GSM -> result.success("GSM")
-            TelephonyManager.NETWORK_TYPE_HSDPA -> result.success("HSDPA")
-            TelephonyManager.NETWORK_TYPE_HSPA -> result.success("HSPA")
-            TelephonyManager.NETWORK_TYPE_HSPAP -> result.success("HSPA+")
-            TelephonyManager.NETWORK_TYPE_HSUPA -> result.success("HSUPA")
-            TelephonyManager.NETWORK_TYPE_IDEN -> result.success("iDen")
-            TelephonyManager.NETWORK_TYPE_UMTS -> result.success("UMTS")
-            TelephonyManager.NETWORK_TYPE_LTE -> result.success("LTE")
-            TelephonyManager.NETWORK_TYPE_NR -> result.success("NR")
-            TelephonyManager.NETWORK_TYPE_TD_SCDMA -> result.success("TD SCDMA")
-            TelephonyManager.NETWORK_TYPE_IWLAN -> result.success("IWLAN")
-            TelephonyManager.NETWORK_TYPE_UNKNOWN -> result.success("Unknown")
-        }
-    }
-
-    private fun networkGeneration(result: MethodChannel.Result) {
-        val radioType = mTelephonyManager?.radioType
-        if (radioType != null) {
-            when (radioType) {
-                TelephonyManager.NETWORK_TYPE_GPRS,
-                TelephonyManager.NETWORK_TYPE_EDGE,
-                TelephonyManager.NETWORK_TYPE_CDMA,
-                TelephonyManager.NETWORK_TYPE_1xRTT,
-                TelephonyManager.NETWORK_TYPE_IDEN,
-                TelephonyManager.NETWORK_TYPE_GSM
-                -> result.success("2G")
-                TelephonyManager.NETWORK_TYPE_UMTS,
-                TelephonyManager.NETWORK_TYPE_EVDO_0,
-                TelephonyManager.NETWORK_TYPE_EVDO_A,
-                TelephonyManager.NETWORK_TYPE_HSDPA,
-                TelephonyManager.NETWORK_TYPE_HSUPA,
-                TelephonyManager.NETWORK_TYPE_HSPA,
-                TelephonyManager.NETWORK_TYPE_EVDO_B,
-                TelephonyManager.NETWORK_TYPE_EHRPD,
-                TelephonyManager.NETWORK_TYPE_HSPAP,
-                TelephonyManager.NETWORK_TYPE_TD_SCDMA
-                -> result.success("3G")
-                TelephonyManager.NETWORK_TYPE_LTE
-                -> result.success("4G")
-                TelephonyManager.NETWORK_TYPE_NR
-                -> result.success("5G")
-                else -> result.success("Unknown")
-                }
-
-        } else {
-            result.error(E_NO_NETWORK_TYPE, "No network type","")
         }
     }
 
